@@ -12,6 +12,9 @@ public class ParserData {
 	public Map<String, Integer>		unigramMap;
 	public int						totalWords;
 
+	/**
+	 * Default constructor
+	 */
 	public ParserData() {
 		this.bigramMap = new HashMap<>();
 		this.unigramMap = new HashMap<>();
