@@ -140,7 +140,10 @@ public class ComputeBigrams {
 		// Do smoothing for each sentence
 		System.out.println(operation);
 		final double comp1 = smoothing.doSmoothing(sentence1, operation);
+		System.out.println("Sentence 1 Probability: " + comp1);
+
 		final double comp2 = smoothing.doSmoothing(sentence2, operation);
+		System.out.println("Sentence 2 Probability: " + comp2);
 
 		// Compute result
 		String output = "";

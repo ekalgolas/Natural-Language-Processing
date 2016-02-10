@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.StringTokenizer;
 
 /**
@@ -43,13 +44,14 @@ public class Smoothing {
 			final String token2 = tokenizer.nextToken();
 			final String bigramToken = token1 + " " + token2;
 			final double conditionalProb = this.getConditionalProbability(smoothingType, token1, bigramToken);
-			sentenceProb *= conditionalProb;
+			if (conditionalProb > 0) {
+				sentenceProb *= conditionalProb;
+			}
 
 			// Set the second token as the first token for the next bigram
 			token1 = token2;
 		}
 
-		System.out.println("Sentence Probability: " + sentenceProb);
 		return sentenceProb;
 	}
 
@@ -71,7 +73,9 @@ public class Smoothing {
 
 		if (smoothingType == Models.NO_SMOOTHING) {
 			// For no smoothing, just divide bigram count by unigram count
-			conditionalProb = bigramCount / unigramCount;
+			if (bigramCount > 0) {
+				conditionalProb = bigramCount / unigramCount;
+			}
 		} else if (smoothingType == Models.ADD_ONE_SMOOTHING) {
 			// For add one smoothing - Add one to bigram count and divide by unigram count added by total number of unigrams
 			conditionalProb = (bigramCount + 1) / (unigramCount + this.parserData.unigramMap.size());
@@ -114,7 +118,8 @@ public class Smoothing {
 					strings[i + 1] = this.parserData.bigramMap.getOrDefault(bigram, 0).toString();
 				} else {
 					// To get total probability, use the formula for no smoothing
-					strings[i + 1] = String.valueOf(this.getConditionalProbability(smoothingType, tokenz[i], bigram));
+					final DecimalFormat decimalFormat = new DecimalFormat("#.####");
+					strings[i + 1] = decimalFormat.format(this.getConditionalProbability(smoothingType, tokenz[i], bigram));
 				}
 			}
 
