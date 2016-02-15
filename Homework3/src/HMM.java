@@ -54,7 +54,7 @@ public class HMM {
 
 	/**
 	 * Runs the Viterbi algorithm with HMM
-	 * 
+	 *
 	 * @param observations
 	 *            Observations to predict for
 	 * @return Most likely sequences as a list of strings
@@ -78,11 +78,7 @@ public class HMM {
 				final Map<String, Double> pathProbs = this.calculateTransitionProb(index, probs, observation, state);
 
 				// Select previous state with maximum probability
-				final String bestState = pathProbs.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
-				probs.putIfAbsent(index, new HashMap<>());
-				probs.get(index).put(state, pathProbs.get(bestState));
-				pointers.putIfAbsent(index, new HashMap<>());
-				pointers.get(index).put(state, bestState);
+				this.setBestState(index, pointers, probs, state, pathProbs);
 			}
 		}
 
@@ -98,6 +94,32 @@ public class HMM {
 		// Reverse and return the result
 		Collections.reverse(result);
 		return result;
+	}
+
+	/**
+	 * Select previous state with maximum probability
+	 *
+	 * @param index
+	 *            Index for probability table
+	 * @param pointers
+	 *            Backpointer matrix
+	 * @param probs
+	 *            Probability matrix
+	 * @param state
+	 *            Current state
+	 * @param pathProbs
+	 *            Probability table from previous possible states to current state
+	 */
+	private void setBestState(final int index,
+			final Map<Integer, Map<String, String>> pointers,
+			final Map<Integer, Map<String, Double>> probs,
+			final String state,
+			final Map<String, Double> pathProbs) {
+		final String bestState = pathProbs.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
+		probs.putIfAbsent(index, new HashMap<>());
+		probs.get(index).put(state, pathProbs.get(bestState));
+		pointers.putIfAbsent(index, new HashMap<>());
+		pointers.get(index).put(state, bestState);
 	}
 
 	/**
@@ -122,8 +144,8 @@ public class HMM {
 		for (final String prevState : this.states) {
 			pathProbs.put(prevState,
 					probs.getOrDefault(index - 1, new HashMap<>()).getOrDefault(prevState, 0.0) *
-					this.transitions.get(prevState).getOrDefault(state, 0.0) *
-					this.emissions.getOrDefault(state, new HashMap<>()).getOrDefault(Integer.parseInt(observation.toString()), 0.0));
+							this.transitions.get(prevState).getOrDefault(state, 0.0) *
+							this.emissions.getOrDefault(state, new HashMap<>()).getOrDefault(Integer.parseInt(observation.toString()), 0.0));
 		}
 
 		return pathProbs;
@@ -137,6 +159,28 @@ public class HMM {
 	 */
 	public static void main(final String[] args) {
 		// Initialize and create the transition and emission matrix with static values
+		final HMM hmm = setup();
+
+		// Validate the command line argument
+		if (args.length > 1) {
+			System.out.println("Only one argument allowed!!");
+		} else if (args.length == 1) {
+			// If provided, use that as input and predict for it
+			final String input = args[0];
+			System.out.println(input + ": " + String.join("", hmm.predict(input.toCharArray())));
+		} else {
+			// Predict for each value in the question stated and print the result
+			System.out.println("331122313: " + String.join("", hmm.predict("331122313".toCharArray())));
+			System.out.println("331123312: " + String.join("", hmm.predict("331123312".toCharArray())));
+		}
+	}
+
+	/**
+	 * Set the transition and emission maps according to figure 6.3
+	 *
+	 * @return Instance of the hmm class after setup
+	 */
+	private static HMM setup() {
 		final HMM hmm = new HMM();
 		Map<String, Double> transitionMap = new HashMap<>();
 		transitionMap.put("H", 0.8);
@@ -160,9 +204,6 @@ public class HMM {
 		emissionMap.put(2, 0.4);
 		emissionMap.put(3, 0.1);
 		hmm.add("C", transitionMap, emissionMap);
-
-		// Predict for each value and print the result
-		System.out.println("331122313: " + String.join("", hmm.predict("331122313".toCharArray())));
-		System.out.println("331123312: " + String.join("", hmm.predict("331123312".toCharArray())));
+		return hmm;
 	}
 }
