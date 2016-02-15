@@ -144,8 +144,8 @@ public class HMM {
 		for (final String prevState : this.states) {
 			pathProbs.put(prevState,
 					probs.getOrDefault(index - 1, new HashMap<>()).getOrDefault(prevState, 0.0) *
-							this.transitions.get(prevState).getOrDefault(state, 0.0) *
-							this.emissions.getOrDefault(state, new HashMap<>()).getOrDefault(Integer.parseInt(observation.toString()), 0.0));
+					this.transitions.get(prevState).getOrDefault(state, 0.0) *
+					this.emissions.getOrDefault(state, new HashMap<>()).getOrDefault(Integer.parseInt(observation.toString()), 0.0));
 		}
 
 		return pathProbs;
@@ -167,7 +167,11 @@ public class HMM {
 		} else if (args.length == 1) {
 			// If provided, use that as input and predict for it
 			final String input = args[0];
-			System.out.println(input + ": " + String.join("", hmm.predict(input.toCharArray())));
+			try {
+				System.out.println(input + ": " + String.join("", hmm.predict(input.toCharArray())));
+			} catch (final NumberFormatException exception) {
+				System.out.println(input + " invalid! Should consist of numbers only");
+			}
 		} else {
 			// Predict for each value in the question stated and print the result
 			System.out.println("331122313: " + String.join("", hmm.predict("331122313".toCharArray())));
