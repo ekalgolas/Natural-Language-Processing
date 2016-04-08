@@ -1,4 +1,5 @@
 package helpers;
+
 /**
  * Class to represent a rule in the grammar
  *
@@ -8,6 +9,16 @@ public class Rule {
 	private double		prob;
 	private String[]	symbols;
 	private String		head;
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		// For debugging purposes
+		return this.head + " -> " + String.join(" ", this.symbols) + " # " + this.prob;
+	}
 
 	/**
 	 * @return the prob

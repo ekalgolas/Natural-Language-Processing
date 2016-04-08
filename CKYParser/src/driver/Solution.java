@@ -1,4 +1,5 @@
 package driver;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -39,6 +40,7 @@ public class Solution {
 		List<Rule> rules = null;
 		try {
 			rules = Parser.parse(file);
+			System.out.println("Provided grammar in the file: " + file.getName() + " parsed successfully!!");
 		} catch (final IOException e) {
 			System.out.println("Unable to parse the grammar: " + e.getMessage());
 		}

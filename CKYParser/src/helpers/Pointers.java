@@ -1,13 +1,24 @@
 package helpers;
+
 /**
  * Class to represent pointers that are stored in backpointer matrix
- * 
+ *
  * @author Ekal.Golas
  */
 public class Pointers {
 	private String	mid;
 	private String	head1;
 	private String	head2;
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		// For debugging purposes
+		return "Mid: " + this.mid + ", head1: " + this.head1 + ", head2: " + this.head2;
+	}
 
 	/**
 	 * @return the mid

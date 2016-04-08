@@ -1,4 +1,5 @@
 package parser;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -180,9 +181,15 @@ public class CKYParser {
 	 */
 	private String getTree(final int row, final int col, final String symbol) {
 		final Pointers pointers = this.backs.getPointersInMatrix(row, col, symbol);
+		// If it is a terminal, display the symbol and the word
 		if (pointers == null || pointers.getMid() == null && pointers.getHead1() == null && pointers.getHead2() == null) {
 			return "(" + symbol.toUpperCase() + " " + this.words[row] + ")";
+		} else if (pointers.getMid() == null && pointers.getHead2() == null) {
+			// Else, if it is a case of chain of unary rules, recurse through the chain and get the tree
+			final String tree = this.getTree(row, col, pointers.getHead1());
+			return "(" + symbol.toUpperCase() + " " + tree + ")";
 		} else {
+			// Else, recurse through all the non terminals and get trees for each
 			final String tree1 = this.getTree(row, Integer.parseInt(pointers.getMid()), pointers.getHead1());
 			final String tree2 = this.getTree(Integer.parseInt(pointers.getMid()), col, pointers.getHead2());
 			return "(" + symbol.toUpperCase() + " " + tree1 + " " + tree2 + ")";
