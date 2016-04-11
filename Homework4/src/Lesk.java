@@ -31,28 +31,32 @@ public class Lesk {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public static void main(final String[] args) throws ClassNotFoundException, FileNotFoundException, IOException {
-		// Validate command line arguments
-		final long start = System.currentTimeMillis();
-		final CommandLine cmd = validateArguments(args);
+	public static void main(final String[] args) {
+		try {
+			// Validate command line arguments
+			final long start = System.currentTimeMillis();
+			final CommandLine cmd = validateArguments(args);
 
-		// Get stopwords
-		final File file = new File(cmd.getOptionValue("stop"));
+			// Get stopwords
+			final File file = new File(cmd.getOptionValue("stop"));
 
-		// Get sentence if provided, else take default sentence
-		final String sentence = cmd.hasOption("text") ? cmd.getOptionValue("text") : "Time flies like an arrow.";
+			// Get sentence if provided, else take default sentence
+			final String sentence = cmd.hasOption("text") ? cmd.getOptionValue("text") : "Time flies like an arrow.";
 
-		// Parse the sentence and update the synsets accordingly for each word
-		final Parser parser = new Parser(file);
-		final String[] split = sentence.split(" ");
-		parser.updateSynsets(split);
+			// Parse the sentence and update the synsets accordingly for each word
+			final Parser parser = new Parser(file);
+			final String[] split = sentence.split(" ");
+			parser.updateSynsets(split);
 
-		// Calculate the synset with maximum overlap and point synsets to it
-		disambiguate(parser.getSynsets(), parser.getDefaults(), parser.getSignatures());
+			// Calculate the synset with maximum overlap and point synsets to it
+			disambiguate(parser.getSynsets(), parser.getDefaults(), parser.getSignatures());
 
-		// Display results after disambiguation
-		displayResults(parser.getSynsets(), split);
-		System.out.println("Total time taken: " + (System.currentTimeMillis() - start) + " milliseconds");
+			// Display results after disambiguation
+			displayResults(parser.getSynsets(), split);
+			System.out.println("Total time taken: " + (System.currentTimeMillis() - start) + " milliseconds");
+		} catch (final Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+		}
 	}
 
 	/**

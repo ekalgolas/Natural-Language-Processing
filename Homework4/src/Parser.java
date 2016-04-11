@@ -70,7 +70,8 @@ public class Parser {
 	 */
 	public void updateSynsets(final String[] words) throws WordNetException {
 		for (String stem : words) {
-			// Ignore stopwrods
+			// Ignore stopwords
+			stem = this.transformText(stem);
 			if (this.stopwords.contains(stem)) {
 				this.synsets.add(new Synset[0]);
 				this.defaults.add(null);
@@ -78,9 +79,15 @@ public class Parser {
 			}
 
 			// Get synsets from wordnet and add to synsets list. Since we chose the first in order in case of tie, default is the first synset
-			stem = this.transformText(stem);
 			final WordNetDatabase database = WordNetDatabase.getFileInstance();
 			final Synset[] syn = database.getSynsets(stem);
+			if (syn == null || syn.length == 0) {
+				// Skip if no sense can be made for this word
+				this.synsets.add(new Synset[0]);
+				this.defaults.add(null);
+				continue;
+			}
+
 			this.synsets.add(syn);
 			this.defaults.add(syn[0]);
 
